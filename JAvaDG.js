@@ -175,20 +175,27 @@ function startClouds() {
         if (gameOver) {
             ctx.fillStyle = '#000';
             ctx.font = '50px sans-serif';
-            ctx.fillText('Welp! You Played Well', canvas.width / 2 - 200, canvas.height / 2);
-            ctx.fillText(`Score: ${score}`, canvas.width / 2 - 10, canvas.height / 2 + 60);
+            ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
+            ctx.fillText(`Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 60);
+            
+            restartButton.visible = true;
+            drawRestartButton(); 
+    
             return;
         }
     
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-        handleClouds(); 
+        handleClouds();
         drawDino();
         handleJump();
         handleObstacles();
     
         requestAnimationFrame(updateGame);
     }
+    canvas.addEventListener('click', checkRestartButtonClick);
+
+    
     
 
 function startGame() {
@@ -208,3 +215,50 @@ startClouds();
 
 
 startGame();
+let restartButton = {
+    x: canvas.width / 2 - 75,
+    y: canvas.height / 2 + 100,
+    width: 150,
+    height: 50,
+    text: 'Try Again :)',
+    visible: false,
+};
+
+function drawRestartButton() {
+    if (restartButton.visible) {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height);
+
+        ctx.fillStyle = '#000';
+        ctx.font = '20px sans-serif';
+        ctx.fillText(restartButton.text, restartButton.x + 30, restartButton.y + 30);
+    }
+}
+
+function checkRestartButtonClick(event) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    if (
+        mouseX >= restartButton.x &&
+        mouseX <= restartButton.x + restartButton.width &&
+        mouseY >= restartButton.y &&
+        mouseY <= restartButton.y + restartButton.height
+    ) {
+        restartGame();
+    }
+}
+ 
+function restartGame() {
+    
+    dino.y = canvas.height / 2 - 25;
+    obstacles.length = 0;
+    clouds.length = 0;
+    score = 0;
+    gameOver = false;
+    restartButton.visible = false;
+
+    
+    updateGame();
+}
